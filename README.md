@@ -1,7 +1,7 @@
 # Wired Pet: Lain V3.0
-<img width="800" height="500" alt="image" src="https://github.com/user-attachments/assets/31b92eef-277a-4096-9d1d-f34339408128" />
+<img width="672" height="444" alt="image" src="https://github.com/user-attachments/assets/ae11ead5-fb71-4b9a-914f-d89abb669aaa" />
 
-### ( TEMPORARY )
+### ( JS SNIPPETS )
 1. Press `Ctrl` + `Shift` + `I` to open Developer Tools.
 2. Go to the **Console** tab.
 3. If it is your first time, type `allow pasting` and press `Enter`.
