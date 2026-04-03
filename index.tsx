@@ -6,17 +6,17 @@ let intervals: NodeJS.Timeout[] = [];
 let lainGlobal: any = null;
 
 const assets = {
-    default: { idle: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/1.png', right: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk1.gif', left: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk2.gif' },
-    school: { idle: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/115.png', right: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk3.gif', left: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk4.gif', event: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainburn.gif' },
-    pink: { idle: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/116.png', right: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk5.gif', left: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk6.gif', event: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/laindance.gif' },
-    bear: { idle: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/117.png', right: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk7.gif', left: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk8.gif', event: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainroll.gif' },
-    home: { idle: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/118.png', right: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk9.gif', left: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/lainwalk10.gif' },
+    default: { idle: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/1.png', right: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/lainwalk1.gif', left: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/lainwalk2.gif' },
+    school: { idle: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/115.png', right: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/lainwalk3.gif', left: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/lainwalk4.gif', event: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/lainburn.gif' },
+    pink: { idle: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/116.png', right: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/lainwalk5.gif', left: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/lainwalk6.gif', event: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/laindance.gif' },
+    bear: { idle: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/117.png', right: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/lainwalk7.gif', left: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/lainwalk8.gif', event: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/lainroll.gif' },
+    home: { idle: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/118.png', right: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/lainwalk9.gif', left: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/lainwalk10.gif' },
     misc: { 
-        crow: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/crow.gif', 
-        girl: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/flyinggirl.gif', 
-        navi: ['https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/navi1.gif', 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/navi2.gif', 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/navi3.gif'],
-        exp1: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/expression1.gif?raw=true',
-        exp2: 'https://raw.githubusercontent.com/realmxrza/Lain-pet-Discord/main/assets/expression2.gif?raw=true'
+        crow: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/crow.gif', 
+        girl: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/flyinggirl.gif', 
+        navi: ['https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/navi1.gif', 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/navi2.gif', 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/navi3.gif'],
+        exp1: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/expression1.gif?raw=true',
+        exp2: 'https://raw.githubusercontent.com/realmxrza/Lain-Discord/main/src/expression2.gif?raw=true'
     }
 };
 
