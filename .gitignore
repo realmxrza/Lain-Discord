@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Local build output
+dist/
+public/lainpet.js
+
+# Local configuration
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# Operating system files
+.DS_Store
+Thumbs.db
