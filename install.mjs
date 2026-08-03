@@ -132,13 +132,17 @@ async function findVencordDirectory(explicitDirectory) {
   );
 }
 
+function needsWindowsShell(command) {
+  if (process.platform !== "win32") return false;
+  return /\.(cmd|bat)$/i.test(command);
+}
+
 function runCommand(command, argumentsList, options) {
-  // On Windows, spawning a .cmd/.bat binary without shell:true throws EINVAL
-  // (Node refuses direct spawns of batch files since CVE-2024-27980).
+
   const result = spawnSync(command, argumentsList, {
     cwd: options.cwd,
     stdio: "inherit",
-    shell: process.platform === "win32",
+    shell: needsWindowsShell(command),
   });
 
   if (result.error?.code === "ENOENT") return null;
