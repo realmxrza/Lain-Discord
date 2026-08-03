@@ -133,10 +133,12 @@ async function findVencordDirectory(explicitDirectory) {
 }
 
 function runCommand(command, argumentsList, options) {
+  // On Windows, spawning a .cmd/.bat binary without shell:true throws EINVAL
+  // (Node refuses direct spawns of batch files since CVE-2024-27980).
   const result = spawnSync(command, argumentsList, {
     cwd: options.cwd,
     stdio: "inherit",
-    shell: false,
+    shell: process.platform === "win32",
   });
 
   if (result.error?.code === "ENOENT") return null;
@@ -200,12 +202,28 @@ function runEsbuild(argumentsList, vencordDirectory) {
   }
 }
 
+async function regenerateAssets(options) {
+  if (options.dryRun) {
+    console.log("Dry run: asset inlining skipped.");
+    return;
+  }
+
+  console.log("Inlining local assets from /assets into LainPet/data/assets.ts.");
+  const generatorPath = path.join(ROOT, "scripts", "generate-assets.mjs");
+  const result = runCommand(process.execPath, [generatorPath], { cwd: ROOT });
+  if (result === null) {
+    throw new Error(`Could not run ${generatorPath}.`);
+  }
+}
+
 async function installVencord(options) {
   const directory = await findVencordDirectory(options.vencordDir);
   const destination = path.join(directory, "src", "userplugins", "LainPet");
 
   console.log(`Vencord source: ${directory}`);
   console.log(`Plugin target:  ${destination}`);
+
+  await regenerateAssets(options);
 
   if (!options.dryRun) {
     await mkdir(path.dirname(destination), { recursive: true });
@@ -245,6 +263,8 @@ async function buildSnippet(options) {
   ];
 
   console.log(`Snippet output: ${output}`);
+
+  await regenerateAssets(options);
 
   if (options.dryRun) {
     console.log("Dry run: snippet build skipped.");
