@@ -77,7 +77,7 @@ export class LainPetRuntime {
       height: window.innerHeight,
     };
     const snapshot = this.pet.advance(elapsed, viewport, Math.random);
-    this.renderer.render(snapshot, timestamp);
+    this.renderer.render(snapshot);
     this.frameId = window.requestAnimationFrame(this.onFrame);
   };
 }

@@ -22,10 +22,7 @@ import {
   type ParametricFunction,
 } from "../types/ParametricCurve";
 
-const SPRITE_SIZE = {
-  normal: 100,
-  event: 200,
-} as const;
+const SPRITE_SIZE = 100;
 const IDLE_DURATION = 5000;
 const MOVEMENT_TIMEOUT = 10000;
 const WALK_RADIUS = 1000;
@@ -40,16 +37,6 @@ const PARABOLA_HEIGHT = 80;
 const AUTONOMOUS_WALK_CHANCE = 0.005;
 const AUTONOMOUS_SINE_CHANCE = 0.15;
 const AUTONOMOUS_PARABOLA_CHANCE = 0.15;
-const SUGAR_RUSH_MIN_DISTANCE = 180;
-const SUGAR_RUSH_MAX_DISTANCE = 360;
-const SUGAR_RUSH_SINE_CHANCE = 0.5;
-const SUGAR_RUSH_SPEED = 13;
-
-const EVENT_DURATIONS: Partial<Record<LainState["outfit"], number>> = {
-  bear: 8000,
-  school: 3000,
-  pink: 10000,
-};
 
 type TimedState = {
   remaining: number;
@@ -73,9 +60,6 @@ export class LainPet {
   private idleRemaining = 0;
   private expression: TimedState = { remaining: 0, invocation: 0 };
   private dialogue: TimedState = { remaining: 0, invocation: 0 };
-  private sugarRushState: TimedState = { remaining: 0, invocation: 0 };
-  private event: TimedState = { remaining: 0, invocation: 0 };
-  private eventOutfit: LainState["outfit"] | null = null;
   private dialogueText: string | null = null;
   private expressionAsset: string | null = null;
   private facing: "left" | "right" = "right";
@@ -88,8 +72,6 @@ export class LainPet {
     outfit: "default",
     mode: "idle",
     isDragging: false,
-    eventActive: false,
-    sugarRush: false,
   };
 
   public constructor(options: LainPetOptions | RandomSource = {}) {
@@ -109,17 +91,9 @@ export class LainPet {
     this.state.target = { x: 100, y: 100 };
     this.state.mode = "idle";
     this.state.isDragging = false;
-    this.state.eventActive = false;
-    this.state.sugarRush = false;
     this.idleRemaining = 0;
     this.expression = { remaining: 0, invocation: this.expression.invocation + 1 };
     this.dialogue = { remaining: 0, invocation: this.dialogue.invocation + 1 };
-    this.sugarRushState = {
-      remaining: 0,
-      invocation: this.sugarRushState.invocation + 1,
-    };
-    this.event = { remaining: 0, invocation: this.event.invocation + 1 };
-    this.eventOutfit = null;
     this.dialogueText = null;
     this.expressionAsset = null;
     this.facing = "right";
@@ -133,32 +107,12 @@ export class LainPet {
     this.state.outfit = outfit;
   }
 
-  public forceRoll(): void {
-    this.triggerSpecialEvent("bear");
-  }
-
-  public forceBurn(): void {
-    this.triggerSpecialEvent("school");
-  }
-
-  public forceDance(): void {
-    this.triggerSpecialEvent("pink");
-  }
-
-  public sugarRush(): void {
-    this.triggerSugarRush();
-  }
-
   public express(): void {
     this.triggerExpression();
   }
 
   public speak(text?: string): void {
     this.showDialogue(text);
-  }
-
-  public specialEvent(): void {
-    this.triggerSpecialEvent();
   }
 
   public getPosition(): Vector2 | null {
@@ -183,7 +137,6 @@ export class LainPet {
       target: { ...this.state.target },
       facing: this.facing,
       dialogue,
-      eventOutfit: this.eventOutfit,
       expression,
     };
   }
@@ -238,7 +191,7 @@ export class LainPet {
     path: MovementPath,
     height = PARABOLA_HEIGHT,
   ): void {
-    if (!this.running || this.state.sugarRush) return;
+    if (!this.running) return;
 
     this.state.target = { ...target };
     if (this.isWithinTargetRadius(target)) {
@@ -265,11 +218,7 @@ export class LainPet {
       this.expireTimedStates(elapsed);
       if (this.state.isDragging) return this.snapshot();
 
-      if (this.state.eventActive) {
-        this.moveToEventCenter(viewport, elapsed);
-      } else if (this.state.sugarRush) {
-        this.moveDuringSugarRush(viewport, elapsed);
-      } else if (this.state.mode === "walk") {
+      if (this.state.mode === "walk") {
         this.moveTowardTarget(elapsed);
       } else {
         this.tryToStartWalking(viewport, elapsed);
@@ -304,24 +253,6 @@ export class LainPet {
     if (this.dialogue.remaining > 0) {
       this.dialogue.remaining = Math.max(0, this.dialogue.remaining - elapsed);
       if (this.dialogue.remaining === 0) this.dialogueText = null;
-    }
-    if (this.sugarRushState.remaining > 0) {
-      this.sugarRushState.remaining = Math.max(
-        0,
-        this.sugarRushState.remaining - elapsed,
-      );
-      if (this.sugarRushState.remaining === 0) {
-        this.state.sugarRush = false;
-        this.finishMovement();
-      }
-    }
-    if (this.event.remaining > 0) {
-      this.event.remaining = Math.max(0, this.event.remaining - elapsed);
-      if (this.event.remaining === 0) {
-        this.state.eventActive = false;
-        this.eventOutfit = null;
-        this.finishMovement();
-      }
     }
   }
 
@@ -428,21 +359,6 @@ export class LainPet {
   }
 
 
-  private moveToEventCenter(viewport: Viewport, elapsed: number): void {
-    const size = SPRITE_SIZE.event;
-    const center = {
-      x: (viewport.width - size) / 2,
-      y: (viewport.height - size) / 2,
-    };
-
-    if (this.isWithinTargetRadius(center)) {
-      this.finishMovement();
-      return;
-    }
-    if (!this.startMovement(center)) return;
-    this.moveToward(center, elapsed);
-  }
-
   private moveTowardTarget(elapsed: number): void {
     this.moveToward(this.state.target, elapsed);
   }
@@ -485,11 +401,8 @@ export class LainPet {
     }
 
     const previousPosition = { ...this.state.position };
-    const movementSpeed = this.state.sugarRush
-      ? SUGAR_RUSH_SPEED
-      : this.state.speed;
     const progressDelta =
-      (movementSpeed * (elapsed / FRAME_DURATION)) /
+      (this.state.speed * (elapsed / FRAME_DURATION)) /
       this.movementDistance;
     this.movementProgress = Math.min(
       1,
@@ -511,53 +424,6 @@ export class LainPet {
     if (this.movementProgress >= 1) this.finishMovement();
   }
 
-  private startSugarRushMovement(viewport: Viewport): boolean {
-    const maxX = Math.max(0, viewport.width - SPRITE_SIZE.normal);
-    const maxY = Math.max(0, viewport.height - SPRITE_SIZE.normal);
-    const angle = this.nextRandom() * Math.PI * 2;
-    const distance =
-      SUGAR_RUSH_MIN_DISTANCE +
-      this.nextRandom() *
-        (SUGAR_RUSH_MAX_DISTANCE - SUGAR_RUSH_MIN_DISTANCE);
-    const unclampedTarget = {
-      x: this.state.position.x + Math.cos(angle) * distance,
-      y: this.state.position.y + Math.sin(angle) * distance,
-    };
-    const target = {
-      x: Math.max(0, Math.min(unclampedTarget.x, maxX)),
-      y: Math.max(0, Math.min(unclampedTarget.y, maxY)),
-    };
-
-    if (
-      magnitude(subtract(target, this.state.position)) <= TARGET_RADIUS
-    ) {
-      return false;
-    }
-
-    const path: MovementPath =
-      this.nextRandom() < SUGAR_RUSH_SINE_CHANCE
-        ? "sine"
-        : "parabola";
-    return this.startMovement(target, MOVEMENT_TIMEOUT, path);
-  }
-
-  private moveDuringSugarRush(viewport: Viewport, elapsed: number): void {
-    if (!this.movementCurve) {
-      this.startSugarRushMovement(viewport);
-    }
-
-    if (this.movementCurve) {
-      this.moveTowardTarget(elapsed);
-    }
-
-    const maxX = Math.max(0, viewport.width - SPRITE_SIZE.normal);
-    const maxY = Math.max(0, viewport.height - SPRITE_SIZE.normal);
-    this.state.position.x = Math.max(0, Math.min(this.state.position.x, maxX));
-    this.state.position.y = Math.max(0, Math.min(this.state.position.y, maxY));
-    if (this.state.velocity.x < 0) this.facing = "left";
-    else if (this.state.velocity.x > 0) this.facing = "right";
-  }
-
   private tryToStartWalking(viewport: Viewport, elapsed: number): void {
     if (this.idleRemaining > 0 || elapsed <= 0) return;
 
@@ -573,8 +439,8 @@ export class LainPet {
     const distance =
       WALK_MIN_DISTANCE +
       this.nextRandom() * (WALK_RADIUS - WALK_MIN_DISTANCE);
-    const maxX = Math.max(0, viewport.width - SPRITE_SIZE.normal);
-    const maxY = Math.max(0, viewport.height - SPRITE_SIZE.normal);
+    const maxX = Math.max(0, viewport.width - SPRITE_SIZE);
+    const maxY = Math.max(0, viewport.height - SPRITE_SIZE);
     const unclampedTarget = {
       x: this.state.position.x + Math.cos(angle) * distance,
       y: this.state.position.y + Math.sin(angle) * distance,
@@ -599,7 +465,7 @@ export class LainPet {
   }
 
   private triggerExpression(): void {
-    if (!this.running || this.state.eventActive) return;
+    if (!this.running) return;
 
     this.expressionAsset =
       this.state.outfit === "bear" ? assets.misc.exp2 : assets.misc.exp1;
@@ -607,40 +473,6 @@ export class LainPet {
       remaining: 3000,
       invocation: this.expression.invocation + 1,
     };
-  }
-
-  private triggerSpecialEvent(outfit: LainState["outfit"] = this.state.outfit): void {
-    if (!this.running || this.state.eventActive || this.state.sugarRush) return;
-
-    const eventAsset = assets[outfit]?.event;
-    if (!eventAsset) return;
-
-    this.event = {
-      remaining: EVENT_DURATIONS[outfit] ?? 10000,
-      invocation: this.event.invocation + 1,
-    };
-    this.eventOutfit = outfit;
-    this.state.eventActive = true;
-  }
-
-  private triggerSugarRush(): void {
-    if (!this.running || this.state.eventActive) return;
-
-    this.sugarRushState = {
-      remaining: 5000,
-      invocation: this.sugarRushState.invocation + 1,
-    };
-    this.cancelMovement();
-    this.state.sugarRush = true;
-    this.state.velocity = scale(
-      {
-        x: this.nextRandom() > 0.5 ? 1 : -1,
-        y: this.nextRandom() > 0.5 ? 1 : -1,
-      },
-      10,
-    );
-    if (this.state.velocity.x < 0) this.facing = "left";
-    else if (this.state.velocity.x > 0) this.facing = "right";
   }
 
   private showDialogue(text?: string): void {
