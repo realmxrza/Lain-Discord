@@ -1,8 +1,7 @@
 import { assets } from "../data/assets";
 import type { LainPetSnapshot } from "../types/LainPetSnapshot";
 
-const NORMAL_SIZE = 100;
-const EVENT_SIZE = 200;
+const SPRITE_SIZE = 100;
 
 export class LainPetRenderer {
   private container: HTMLDivElement | null = null;
@@ -29,7 +28,7 @@ export class LainPetRenderer {
     `;
     lainSprite.style.cssText = `
       position: absolute;
-      width: ${NORMAL_SIZE}px;
+      width: ${SPRITE_SIZE}px;
       pointer-events: auto;
       cursor: grab;
       transition: filter 0.2s;
@@ -81,30 +80,25 @@ export class LainPetRenderer {
     return this.lainSprite;
   }
 
-  public render(snapshot: LainPetSnapshot, timestamp = 0): void {
+  public render(snapshot: LainPetSnapshot): void {
     if (!this.container || !this.lainSprite || !this.bubble || !this.expression) {
       return;
     }
 
-    const size = snapshot.eventActive ? EVENT_SIZE : NORMAL_SIZE;
     const { position } = snapshot;
-    const eventAssets = assets[snapshot.eventOutfit ?? snapshot.outfit];
     const outfitAssets = assets[snapshot.outfit];
-    const isMoving = snapshot.mode === "walk" || snapshot.sugarRush;
-    const spriteUrl = snapshot.eventActive
-      ? eventAssets.event ?? eventAssets.idle
-      : isMoving
+    const spriteUrl =
+      snapshot.mode === "walk"
         ? snapshot.facing === "right"
           ? outfitAssets.right
           : outfitAssets.left
         : outfitAssets.idle;
 
-    this.lainSprite.style.width = `${size}px`;
     this.lainSprite.style.left = `${position.x}px`;
     this.lainSprite.style.top = `${position.y}px`;
-    this.bubble.style.left = `${position.x + size / 2 - 75}px`;
+    this.bubble.style.left = `${position.x + SPRITE_SIZE / 2 - 75}px`;
     this.bubble.style.top = `${position.y - 50}px`;
-    this.expression.style.left = `${position.x + size / 2 - 25}px`;
+    this.expression.style.left = `${position.x + SPRITE_SIZE / 2 - 25}px`;
     this.expression.style.top = `${position.y - 40}px`;
     this.lainSprite.style.cursor = snapshot.isDragging ? "grabbing" : "grab";
 
@@ -112,10 +106,6 @@ export class LainPetRenderer {
     if (this.lainSprite.src !== resolvedSpriteUrl) {
       this.lainSprite.src = spriteUrl;
     }
-
-    this.lainSprite.style.filter = snapshot.sugarRush
-      ? `hue-rotate(${timestamp % 360}deg) brightness(1.2)`
-      : "";
 
     const dialogue = snapshot.dialogue;
     this.bubble.textContent = dialogue.text ?? "";

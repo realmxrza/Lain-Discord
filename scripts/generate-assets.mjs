@@ -26,31 +26,13 @@ const MIME_BY_EXTENSION = {
 // Keep this in sync with what's actually inside /assets.
 const OUTFITS = {
   default: { idle: "1.png", right: "lainwalk1.gif", left: "lainwalk2.gif" },
-  school: {
-    idle: "115.png",
-    right: "lainwalk3.gif",
-    left: "lainwalk4.gif",
-    event: "lainburn.gif",
-  },
-  pink: {
-    idle: "116.png",
-    right: "lainwalk5.gif",
-    left: "lainwalk6.gif",
-    event: "laindance.gif",
-  },
-  bear: {
-    idle: "117.png",
-    right: "lainwalk7.gif",
-    left: "lainwalk8.gif",
-    event: "lainroll.gif",
-  },
+  school: { idle: "115.png", right: "lainwalk3.gif", left: "lainwalk4.gif" },
+  pink: { idle: "116.png", right: "lainwalk5.gif", left: "lainwalk6.gif" },
+  bear: { idle: "117.png", right: "lainwalk7.gif", left: "lainwalk8.gif" },
   home: { idle: "118.png", right: "lainwalk9.gif", left: "lainwalk10.gif" },
 };
 
 const MISC = {
-  crow: "crow.gif",
-  girl: "flyinggirl.gif",
-  navi: ["navi1.gif", "navi2.gif", "navi3.gif"],
   exp1: "expression1.gif",
   exp2: "expression2.gif",
 };
@@ -99,9 +81,6 @@ async function buildOutfits() {
 
 async function buildMisc() {
   return {
-    crow: await toDataUri(MISC.crow),
-    girl: await toDataUri(MISC.girl),
-    navi: await Promise.all(MISC.navi.map(toDataUri)),
     exp1: await toDataUri(MISC.exp1),
     exp2: await toDataUri(MISC.exp2),
   };
@@ -116,11 +95,6 @@ function serializeOutfit(entry) {
 
 function serializeMisc(misc) {
   return `{
-    crow: ${JSON.stringify(misc.crow)},
-    girl: ${JSON.stringify(misc.girl)},
-    navi: [
-${misc.navi.map((uri) => `      ${JSON.stringify(uri)},`).join("\n")}
-    ],
     exp1: ${JSON.stringify(misc.exp1)},
     exp2: ${JSON.stringify(misc.exp2)},
   }`;
@@ -144,13 +118,9 @@ type OutfitAssets = {
   idle: string;
   right: string;
   left: string;
-  event?: string;
 };
 
 type MiscAssets = {
-  crow: string;
-  girl: string;
-  navi: string[];
   exp1: string;
   exp2: string;
 };

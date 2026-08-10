@@ -25,5 +25,4 @@ export type LainPetSnapshot = LainState & {
   facing: "left" | "right";
   dialogue: DialogueSnapshot;
   expression: ExpressionSnapshot;
-  eventOutfit: LainState["outfit"] | null;
 };

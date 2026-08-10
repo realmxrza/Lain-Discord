@@ -8,6 +8,4 @@ export type LainState = {
   outfit: "default" | "school" | "pink" | "bear" | "home";
   mode: "idle" | "walk";
   isDragging: boolean;
-  eventActive: boolean;
-  sugarRush: boolean;
 };

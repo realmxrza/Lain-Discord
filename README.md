@@ -54,11 +54,6 @@ node install.mjs vencord --vencord-dir /path/to/Vencord --no-build
 Open a Discord channel and enter `/lain`.
 
 ```text
-/lain action:roll
-/lain action:dance
-/lain action:navi
-/lain action:crow
-/lain action:girl
 /lain action:express
 /lain action:speak
 ```
@@ -76,12 +71,8 @@ Use these methods from the browser console or from your website code:
 
 ```js
 window.LainPet.speak("Hello from the Wired.");
-window.LainPet.setOutfit("pink");
-window.LainPet.forceDance();
-window.LainPet.dropNavi();
-window.LainPet.spawnCrow();
-window.LainPet.spawnGirl();
-window.LainPet.sugarRush();
+window.LainPet.express();
+window.LainPet.start();
 window.LainPet.stop();
 ```
 
