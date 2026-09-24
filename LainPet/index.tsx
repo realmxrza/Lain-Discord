@@ -42,11 +42,15 @@ export default definePlugin({
     "A cute Lain desktop pet by realmxrza — Lain-Discord custom build",
   authors: [
     {
-      name: "realmxrza",
+      name: "slushieye",
       id: 1348602887986745385n,
     },
+    {
+      name: "kuukuumin",
+      id: 434237791971442718n,
+    },
   ],
-
+  
   commands: [
     {
       name: "lain",
