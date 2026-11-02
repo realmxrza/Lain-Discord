@@ -1,6 +1,6 @@
 # Lain Desktop Pet
 
-Lain is a desktop pet for Vencord and web pages created by realmxrza.
+Credit: https://github.com/ad044/lain-bootleg-bootleg
 
 The repository provides two supported installation methods:
 
@@ -8,17 +8,7 @@ The repository provides two supported installation methods:
 2. Build a JavaScript snippet for a website.
 
 ## What Lain does
-
-Lain lives on top of the page and mostly looks after herself.
-
-- She wanders the viewport on her own, walking in a straight line or along a
-  curved path, and rests for a moment after arriving somewhere.
-- Every 15 seconds she has a chance to say a line and a chance to pull a face.
-- Every 60 seconds she changes into one of her five outfits.
-- You can pick her up and drag her anywhere with the mouse.
-
-Nothing else happens on its own, and the only things you can ask her to do are
-speak and express.
+she walks and do some silly stuff
 
 ## Requirements
 
